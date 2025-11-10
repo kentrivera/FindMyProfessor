@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Test - FindMyProfessor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .response-box.show {
+            display: block;
+        }
+
+        .response-box.error {
+            border-left-color: #f44336;
+        }
+
+        .response-box.success {
+            border-left-color: #4caf50;
+        }
+
+        .emotion-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #fff3e0;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 10px 0;
+        }
+
+        .emotion-emoji {
+            font-size: 20px;
+        }
+
+        .professor-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+            margin: 10px 0;
+        }
+
+        .attachment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .attachment-item {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .attachment-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .attachment-name {
+            font-size: 12px;
+            color: #666;
+            word-break: break-word;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .suggestion-chip {
+            padding: 6px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.online {
+            background: #4caf50;
+        }
+
+        .status-indicator.offline {
+            background: #f44336;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .quick-tests {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-test-btn {
+            padding: 10px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-test-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Chatbot Integration Test</h1>
+        <p class="subtitle">Test the Python chatbot with emotion detection, images, and attachments</p>
+
+        <!-- Server Status -->
+        <div class="test-section">
+            <h2>Server Status</h2>
+            <div id="serverStatus">
+                <span class="status-indicator offline"></span>
+                <span>Checking connection...</span>
+            </div>
+        </div>
+
+        <!-- Health Check -->
+        <div class="test-section">
+            <h2>Health Check</h2>
+            <button onclick="checkHealth()">Check Server Health</button>
+            <div id="healthResponse" class="response-box"></div>
+        </div>
+
+        <!-- Message Test -->
+        <div class="test-section">
+            <h2>Send Message</h2>
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()" id="sendBtn">Send</button>
+            </div>
+            
+            <div class="quick-tests">
+                <button class="quick-test-btn" onclick="quickTest('Hello')">👋 Greeting</button>
+                <button class="quick-test-btn" onclick="quickTest('Who teaches Computer Science?')">👨‍🏫 Find Professor</button>
+                <button class="quick-test-btn" onclick="quickTest('Show me schedules')">📅 Schedules</button>
+                <button class="quick-test-btn" onclick="quickTest('What subjects are available?')">📚 Subjects</button>
+                <button class="quick-test-btn" onclick="quickTest('I need help')">🆘 Help</button>
+                <button class="quick-test-btn" onclick="quickTest('Thank you!')">🙏 Thanks</button>
+            </div>
+
+            <div id="messageResponse" class="response-box"></div>
+        </div>
+
+        <!-- Reload Data -->
+        <div class="test-section">
+            <h2>Reload Database</h2>
+            <button onclick="reloadData()">Reload Data</button>
+            <div id="reloadResponse" class="response-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        // Check server status on load
+        window.addEventListener('load', checkServerStatus);
+
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${API_URL}/`);
+                const data = await response.json();
+                
+                document.getElementById('serverStatus').innerHTML = `
+                    <span class="status-indicator online"></span>
+                    <strong>Online</strong> - ${data.message} (v${data.version})
+                `;
+            } catch (error) {
+                document.getElementById('serverStatus').innerHTML = `
+                    <span class="status-indicator offline"></span>
+                    <strong>Offline</strong> - Server is not responding. Make sure to run START_CHATBOT.bat
+                `;
+            }
+        }
+
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                
+                const box = document.getElementById('healthResponse');
+                box.className = 'response-box success show';
+                box.innerHTML = `
+                    <strong>✅ Server is healthy!</strong><br>
+                    Professors loaded: ${data.professors_loaded}
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                const box = document.getElementById('healthResponse');
+                box.className = 'response-box error show';
+                box.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch(`${API_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: 'test-session'
+                    })
+                });
+
+                const data = await response.json();
+                
+                const box = document.getElementById('messageResponse');
+                box.className = 'response-box success show';
+                
+                let html = `<strong>Response:</strong><br>${data.response}<br><br>`;
+                
+                // Show emotion
+                if (data.emotion) {
+                    html += `
+                        <div class="emotion-badge">
+                            <span class="emotion-emoji">${data.emotion.emoji}</span>
+                            <span>Emotion: ${data.emotion.emotion} (${data.emotion.polarity > 0 ? 'Positive' : data.emotion.polarity < 0 ? 'Negative' : 'Neutral'})</span>
+                        </div>
+                    `;
+                }
+
+                // Show professor image
+                if (data.image_url) {
+                    html += `<img src="http://localhost/find_my_prof/backend/php/${data.image_url}" class="professor-image" alt="Professor">`;
+                }
+
+                // Show attachments
+                if (data.attachments && data.attachments.length > 0) {
+                    html += `<br><strong>Attachments (${data.attachments.length}):</strong>`;
+                    html += '<div class="attachment-grid">';
+                    data.attachments.forEach(att => {
+                        html += '<div class="attachment-item">';
+                        if (att.file_type && att.file_type.startsWith('image/')) {
+                            html += `<img src="http://localhost/find_my_prof/backend/php/${att.file_path}" alt="${att.file_name}">`;
+                        }
+                        html += `<div class="attachment-name">${att.file_name}</div>`;
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                // Show suggestions
+                if (data.suggestions && data.suggestions.length > 0) {
+                    html += '<div class="suggestions">';
+                    data.suggestions.forEach(sugg => {
+                        html += `<span class="suggestion-chip" onclick="quickTest('${sugg}')">${sugg}</span>`;
+                    });
+                    html += '</div>';
+                }
+
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                box.innerHTML = html;
+
+            } catch (error) {
+                const box = document.getElementById('messageResponse');
+                box.className = 'response-box error show';
+                box.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send';
+            }
+        }
+
+        async function reloadData() {
+            try {
+                const response = await fetch(`${API_URL}/reload-data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                const box = document.getElementById('reloadResponse');
+                box.className = 'response-box success show';
+                box.innerHTML = `
+                    <strong>✅ ${data.message}</strong>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+
+                // Refresh health check
+                setTimeout(checkHealth, 500);
+            } catch (error) {
+                const box = document.getElementById('reloadResponse');
+                box.className = 'response-box error show';
+                box.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+            }
+        }
+
+        function quickTest(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+backend/python/venv/
+
+# Production
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+backend/php/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+backend/php/uploads/*
+!backend/php/uploads/.gitkeep
+
+# Logs
+*.log
+backend/php/logs/

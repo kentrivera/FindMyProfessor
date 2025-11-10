@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>If you see this, the server works</h1>
+    <script>
+        // Test if we can reach the API
+        fetch('/api/professors')
+            .then(r => r.json())
+            .then(data => {
+                document.body.innerHTML += '<h2>API Works! Found ' + data.length + ' professors</h2>';
+                document.body.innerHTML += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(err => {
+                document.body.innerHTML += '<h2 style="color:red">API Error: ' + err + '</h2>';
+            });
+    </script>
+</body>
+</html>
